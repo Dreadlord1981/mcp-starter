@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 use serde_json::{Value};
 
-use crate::tool::ToolResult;
-
 fn default_jsonrpc() -> String {
 	"2.0".into()
 }
@@ -36,7 +34,7 @@ pub struct JsonSuccess {
 	#[serde(default = "default_jsonrpc")]
 	pub jsonrpc: String,
 	pub id: RequestId,
-	pub result: ToolResult
+	pub result: Value
 }
 
 #[derive(Debug, Deserialize, Serialize, Default)]

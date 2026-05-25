@@ -1,10 +1,11 @@
-use mcp_starter::{protocol::JsonRequest, tool::handle_request};
+use mcp_starter::{protocol::JsonRequest, tool::ToolRegistry, transport::handle_request};
 use tokio::io::{self, AsyncBufReadExt, AsyncWriteExt, BufReader, BufWriter};
 
 #[tokio::main]
 async fn main() -> io::Result<()> {
     let stdin = io::stdin();
     let stdout = io::stdout();
+    let registry = ToolRegistry::new();
     let mut lines = BufReader::new(stdin).lines();
     let mut stdout = BufWriter::new(stdout);
 
@@ -22,7 +23,7 @@ async fn main() -> io::Result<()> {
             }
         };
 
-        let response = match handle_request(&request) {
+        let response = match handle_request(&request, &registry).await {
             Ok(result) => serde_json::to_string(&result),
             Err(error) => serde_json::to_string(&error),
         }
