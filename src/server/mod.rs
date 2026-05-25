@@ -1,8 +1,9 @@
 mod initialize;
+mod notification;
 mod transport;
 
 use crate::{
-    protocol::{JsonError, JsonRequest, JsonSuccess},
+    protocol::{JsonError, JsonNotification, JsonRequest, JsonSuccess},
     tool::ToolRegistry,
 };
 use tokio::io::{self, AsyncBufReadExt, AsyncWriteExt, BufReader, BufWriter};
@@ -33,6 +34,10 @@ impl Server {
         self.transport.handle_request(request).await
     }
 
+    pub async fn handle_notification(&self, notification: &JsonNotification) {
+        self.transport.handle_notification(notification).await;
+    }
+
     pub async fn run_stdio(&self) -> io::Result<()> {
         let stdin = io::stdin();
         let stdout = io::stdout();
@@ -45,10 +50,31 @@ impl Server {
                 continue;
             }
 
-            let request: JsonRequest = match serde_json::from_str(line) {
-                Ok(request) => request,
+            let message: serde_json::Value = match serde_json::from_str(line) {
+                Ok(message) => message,
                 Err(error) => {
                     eprintln!("invalid JSON from stdin: {error}");
+                    continue;
+                }
+            };
+
+            if message.get("id").is_none() {
+                let notification: JsonNotification = match serde_json::from_value(message) {
+                    Ok(notification) => notification,
+                    Err(error) => {
+                        eprintln!("invalid notification from stdin: {error}");
+                        continue;
+                    }
+                };
+
+                self.handle_notification(&notification).await;
+                continue;
+            }
+
+            let request: JsonRequest = match serde_json::from_value(message) {
+                Ok(request) => request,
+                Err(error) => {
+                    eprintln!("invalid request from stdin: {error}");
                     continue;
                 }
             };

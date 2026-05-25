@@ -2,12 +2,15 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 use crate::{
-    protocol::{JsonError, JsonRequest, JsonSuccess},
+    protocol::{JsonError, JsonNotification, JsonRequest, JsonSuccess},
     tool::{ContentBlock, ListToolsResult, ToolRegistry, ToolResult},
     tools::{EchoTool, TimeTool},
 };
 
-use super::initialize::{Implementation, InitializeResult, ServerCapabilities, ToolsCapability};
+use super::{
+    initialize::{Implementation, InitializeResult, ServerCapabilities, ToolsCapability},
+    notification::{NotificationMethod, StandardNotificationMethod},
+};
 
 #[derive(Default)]
 pub struct Transport {
@@ -130,6 +133,22 @@ impl Transport {
         }
     }
 
+    pub async fn handle_notification(&self, notification: &JsonNotification) {
+        let method = match serde_json::from_value::<NotificationMethod>(
+            serde_json::Value::String(notification.method.clone()),
+        ) {
+            Ok(method) => method,
+            Err(_) => return,
+        };
+
+        match method {
+            NotificationMethod::Standard(StandardNotificationMethod::Initialized) => {
+                self.handle_initialized_notification(notification).await;
+            }
+            NotificationMethod::Other(_) => {}
+        }
+    }
+
     async fn handle_tool_call(&self, request: &JsonRequest) -> Result<ToolResult, JsonError> {
         let params = serde_json::from_value::<ToolCallParams>(
             request.params.clone().unwrap_or(Value::Null),
@@ -160,6 +179,10 @@ impl Transport {
 
             protocol_error
         })
+    }
+
+    async fn handle_initialized_notification(&self, _notification: &JsonNotification) {
+        // Placeholder for post-initialize session state if needed later.
     }
 }
 
