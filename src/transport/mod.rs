@@ -3,7 +3,7 @@ mod initialize;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    protocol::{JsonError, JsonErrorObject, JsonRequest, JsonSuccess},
+    protocol::{JsonError, JsonRequest, JsonSuccess},
     tool::{ContentBlock, ListToolsResult, ToolRegistry, ToolResult},
 };
 
@@ -40,15 +40,11 @@ pub async fn handle_request(
         match serde_json::from_value::<Method>(serde_json::Value::String(request.method.clone())) {
             Ok(method) => method,
             Err(_) => {
-                return Err(JsonError {
-                    id: Some(request.id.clone()),
-                    error: JsonErrorObject {
-                        data: None,
-                        message: format!("invalid MCP method: {}", request.method),
-                        code: -100,
-                    },
-                    ..Default::default()
-                });
+                return Err(JsonError::new(
+                    Some(request.id.clone()),
+                    -100,
+                    format!("invalid MCP method: {}", request.method),
+                ));
             }
         };
 
@@ -103,14 +99,10 @@ pub async fn handle_request(
                 meta: None,
             }),
         }),
-        Method::Other(_) => Err(JsonError {
-            id: Some(request.id.clone()),
-            error: JsonErrorObject {
-                data: None,
-                message: format!("unknown MCP method from stdin: {}", request.method),
-                code: -100,
-            },
-            ..Default::default()
-        }),
+        Method::Other(_) => Err(JsonError::new(
+            Some(request.id.clone()),
+            -100,
+            format!("unknown MCP method from stdin: {}", request.method),
+        )),
     }
 }
