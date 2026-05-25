@@ -150,4 +150,4 @@ The demo tools are good references:
 
 - Notifications do not return responses.
 - The current runtime is newline-delimited JSON for local testing.
-- The runtime layer is separated so HTTP can be added later without changing server logic.
+- The runtime layer is separated so additional transport types can be added later without changing server logic.
