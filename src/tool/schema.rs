@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Map, Value};
+use serde_json::Value;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ToolSchema {
@@ -8,7 +8,7 @@ pub struct ToolSchema {
     #[serde(rename = "type")]
     pub schema_type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub properties: Option<Map<String, Value>>,
+    pub properties: Option<Value>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub required: Option<Vec<String>>,
 }
