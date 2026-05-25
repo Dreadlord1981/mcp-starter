@@ -3,6 +3,12 @@ mod stdio;
 use crate::server::Server;
 use tokio::io;
 
+#[derive(Debug, Default)]
+pub enum RuntimeMode {
+    #[default]
+    Stdio,
+}
+
 #[derive(Default)]
 pub struct Runtime;
 
@@ -11,7 +17,9 @@ impl Runtime {
         Self
     }
 
-    pub async fn run_with_stdio(&self, server: &Server) -> io::Result<()> {
-        stdio::run(server).await
+    pub async fn run(&self, server: &Server, mode: RuntimeMode) -> io::Result<()> {
+        match mode {
+            RuntimeMode::Stdio => stdio::run(server).await,
+        }
     }
 }

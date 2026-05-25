@@ -42,8 +42,10 @@ cargo run
 The default entrypoint uses:
 
 ```rust
-Runtime::new().run_with_stdio(&Server::new()).await
+Runtime::new().run(&Server::new(), RuntimeMode::Stdio).await
 ```
+
+The runtime API is already structured for multiple modes, even though only STDIO is implemented right now.
 
 ## Test Manually
 
