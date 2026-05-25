@@ -30,16 +30,14 @@ impl Tool for EchoTool {
             name: "echo".to_string(),
             title: Some("Echo".to_string()),
             description: Some("Echoes the provided text back to the caller.".to_string()),
-            input_schema: ToolSchema {
-                properties: Some(json!({
+            input_schema: ToolSchema::new()
+                .with_properties(json!({
                     "text": {
                         "type": "string",
                         "description": "The text to echo back."
                     }
-                })),
-                required: vec!["text".to_string()],
-                ..Default::default()
-            },
+                }))
+                .with_required(vec!["text".to_string()]),
             output_schema: None,
             annotations: None,
             meta: None,

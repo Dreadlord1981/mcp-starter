@@ -23,3 +23,24 @@ impl Default for ToolSchema {
         }
     }
 }
+
+impl ToolSchema {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    pub fn with_schema(mut self, schema: impl Into<String>) -> Self {
+        self.schema = Some(schema.into());
+        self
+    }
+
+    pub fn with_properties(mut self, properties: Value) -> Self {
+        self.properties = Some(properties);
+        self
+    }
+
+    pub fn with_required(mut self, required: Vec<String>) -> Self {
+        self.required = required;
+        self
+    }
+}
