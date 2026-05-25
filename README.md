@@ -88,6 +88,59 @@ Call `time`:
 3. Export it from `src/tools/mod.rs`
 4. Register it in `src/server/transport.rs` inside `register_default_tools()`
 
+Example registration:
+
+```rust
+fn register_default_tools(&mut self) {
+    self.registry.register(EchoTool::new());
+    self.registry.register(TimeTool::new());
+    self.registry.register(MyTool::new());
+}
+```
+
+Minimal tool example:
+
+```rust
+use async_trait::async_trait;
+use serde_json::Value;
+
+use crate::tool::{ContentBlock, Tool, ToolDescriptor, ToolError, ToolResult, ToolSchema};
+
+pub struct MyTool;
+
+impl MyTool {
+    pub fn new() -> Self {
+        Self
+    }
+}
+
+#[async_trait]
+impl Tool for MyTool {
+    fn descriptor(&self) -> ToolDescriptor {
+        ToolDescriptor {
+            name: "my_tool".to_string(),
+            title: Some("My Tool".to_string()),
+            description: Some("Describe what the tool does.".to_string()),
+            input_schema: ToolSchema::new(),
+            output_schema: None,
+            annotations: None,
+            meta: None,
+        }
+    }
+
+    async fn call(&self, _arguments: Option<Value>) -> Result<ToolResult, ToolError> {
+        Ok(ToolResult {
+            content: vec![ContentBlock::Text {
+                text: "hello from my tool".to_string(),
+            }],
+            structured_content: None,
+            is_error: Some(false),
+            meta: None,
+        })
+    }
+}
+```
+
 The demo tools are good references:
 
 - `src/tools/echo.rs`
