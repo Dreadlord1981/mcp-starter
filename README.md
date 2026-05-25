@@ -7,6 +7,7 @@ Small Rust starter template for an MCP server running over STDIO.
 - JSON-RPC / MCP protocol structs
 - A `Server` that handles MCP requests and notifications
 - A `Runtime` facade with a working STDIO runtime
+- A minimal resource layer with default `resources/list` handling
 - A tool system with:
   - `Tool` trait
   - `ToolRegistry`
@@ -26,6 +27,9 @@ Small Rust starter template for an MCP server running over STDIO.
 
 - `src/runtime/`
   Runtime hosting. Right now this includes STDIO only.
+
+- `src/resource/`
+  Shared resource response types and listing payloads.
 
 - `src/tool/`
   Shared internal tool abstractions and types.
@@ -69,16 +73,22 @@ List tools:
 {"jsonrpc":"2.0","id":2,"method":"tools/list"}
 ```
 
+List resources:
+
+```json
+{"jsonrpc":"2.0","id":3,"method":"resources/list"}
+```
+
 Call `echo`:
 
 ```json
-{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"echo","arguments":{"text":"hello"}}}
+{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"echo","arguments":{"text":"hello"}}}
 ```
 
 Call `time`:
 
 ```json
-{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"time","arguments":{}}}
+{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"time","arguments":{}}}
 ```
 
 ## Add A New Tool

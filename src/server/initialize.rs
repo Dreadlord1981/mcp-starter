@@ -23,7 +23,15 @@ pub struct Implementation {
 #[derive(Debug, Default, Deserialize, Serialize)]
 pub struct ServerCapabilities {
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub resources: Option<ResourcesCapability>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub tools: Option<ToolsCapability>,
+}
+
+#[derive(Debug, Default, Deserialize, Serialize)]
+pub struct ResourcesCapability {
+    #[serde(rename = "listChanged", skip_serializing_if = "Option::is_none")]
+    pub list_changed: Option<bool>,
 }
 
 #[derive(Debug, Default, Deserialize, Serialize)]

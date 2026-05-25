@@ -3,12 +3,16 @@ use serde_json::Value;
 
 use crate::{
     protocol::{JsonError, JsonNotification, JsonRequest, JsonSuccess},
+    resource::ListResourcesResult,
     tool::{ContentBlock, ListToolsResult, ToolRegistry, ToolResult},
     tools::{EchoTool, TimeTool},
 };
 
 use super::{
-    initialize::{Implementation, InitializeResult, ServerCapabilities, ToolsCapability},
+    initialize::{
+        Implementation, InitializeResult, ResourcesCapability, ServerCapabilities,
+        ToolsCapability,
+    },
     notification::{NotificationMethod, StandardNotificationMethod},
 };
 
@@ -28,6 +32,8 @@ pub enum Method {
 pub enum StandardMethod {
     #[serde(rename = "initialize")]
     Initialize,
+    #[serde(rename = "resources/list")]
+    ResourcesList,
     #[serde(rename = "tools/list")]
     ToolsList,
     #[serde(rename = "tools/call")]
@@ -88,6 +94,9 @@ impl Transport {
                 result: to_json_value(InitializeResult {
                     protocol_version: "2025-06-18".to_string(),
                     capabilities: ServerCapabilities {
+                        resources: Some(ResourcesCapability {
+                            list_changed: Some(false),
+                        }),
                         tools: Some(ToolsCapability {
                             list_changed: Some(false),
                         }),
@@ -97,6 +106,14 @@ impl Transport {
                         version: env!("CARGO_PKG_VERSION").to_string(),
                     },
                     instructions: None,
+                    meta: None,
+                }),
+            }),
+            Method::Standard(StandardMethod::ResourcesList) => Ok(JsonSuccess {
+                jsonrpc: request.jsonrpc.clone(),
+                id: request.id.clone(),
+                result: to_json_value(ListResourcesResult {
+                    resources: Vec::new(),
                     meta: None,
                 }),
             }),
