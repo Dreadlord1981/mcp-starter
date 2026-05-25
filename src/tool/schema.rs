@@ -9,8 +9,8 @@ pub struct ToolSchema {
     pub schema_type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub properties: Option<Value>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub required: Option<Vec<String>>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub required: Vec<String>,
 }
 
 impl Default for ToolSchema {
@@ -19,7 +19,7 @@ impl Default for ToolSchema {
             schema: None,
             schema_type: "object".to_string(),
             properties: None,
-            required: None,
+            required: Vec::new(),
         }
     }
 }

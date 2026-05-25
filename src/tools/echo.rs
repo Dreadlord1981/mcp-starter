@@ -37,7 +37,7 @@ impl Tool for EchoTool {
                         "description": "The text to echo back."
                     }
                 })),
-                required: Some(vec!["text".to_string()]),
+                required: vec!["text".to_string()],
                 ..Default::default()
             },
             output_schema: None,
