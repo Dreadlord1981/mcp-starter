@@ -3,7 +3,7 @@ use serde_json::Value;
 
 use crate::{
     protocol::{JsonError, JsonNotification, JsonRequest, JsonSuccess},
-    resource::ListResourcesResult,
+    resource::{ListResourcesResult, ListResourcesTemplateResult},
     tool::{ContentBlock, ListToolsResult, ToolRegistry, ToolResult},
     tools::{EchoTool, TimeTool},
 };
@@ -34,6 +34,8 @@ pub enum StandardMethod {
     Initialize,
     #[serde(rename = "resources/list")]
     ResourcesList,
+    #[serde(rename = "resources/templates/list")]
+    ResourcesTemplatesList,
     #[serde(rename = "tools/list")]
     ToolsList,
     #[serde(rename = "tools/call")]
@@ -114,6 +116,14 @@ impl Transport {
                 id: request.id.clone(),
                 result: to_json_value(ListResourcesResult {
                     resources: Vec::new(),
+                    meta: None,
+                }),
+            }),
+            Method::Standard(StandardMethod::ResourcesTemplatesList) => Ok(JsonSuccess {
+                jsonrpc: request.jsonrpc.clone(),
+                id: request.id.clone(),
+                result: to_json_value(ListResourcesTemplateResult {
+                    resource_templates: Vec::new(),
                     meta: None,
                 }),
             }),

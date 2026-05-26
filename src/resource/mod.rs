@@ -1,5 +1,5 @@
 mod descriptor;
 mod list;
 
-pub use descriptor::ResourceDescriptor;
-pub use list::ListResourcesResult;
+pub use descriptor::{ResourceDescriptor, ResourceTemplateDescriptor};
+pub use list::{ListResourcesResult, ListResourcesTemplateResult};
